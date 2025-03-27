@@ -1,0 +1,117 @@
+# Structure de l'Application SmartContract
+
+## Présentation
+SmartContract est une application mobile qui permet aux utilisateurs de créer et gérer des contrats simples entre eux. Elle offre une interface conviviale pour définir des conditions et des contreparties, suivre leur état d'avancement et faciliter la collaboration entre utilisateurs.
+
+## Architecture Technique
+- Framework : React Native avec Expo
+- Base de données : Firebase Firestore
+- Authentification : Firebase Auth
+- Navigation : Expo Router
+
+## Structure des Répertoires
+
+### Configuration Firebase
+- `firebase/config.js` : Configuration de la connexion à Firebase
+
+### Modèles de Données
+- `models/index.js` : Définition des modèles (User, Contract, Condition, Counterpart, Invitation)
+
+### Composants
+- `components/ThemedText.tsx` : Composant de texte avec support de thème
+- `components/ThemedView.tsx` : Composant de vue avec support de thème
+- `components/HapticTab.tsx` : Onglet avec retour haptique
+- `components/ui/IconSymbol.tsx` : Icônes pour l'interface
+- `components/ui/TabBarBackground.tsx` : Fond de la barre d'onglets
+
+### Écrans d'Authentification
+- `app/(auth)/login.tsx` : Écran de connexion
+- `app/(auth)/register.tsx` : Écran d'inscription
+- `app/(auth)/_layout.tsx` : Layout pour la section authentification
+
+### Écrans Principaux (Onglets)
+- `app/(tabs)/index.tsx` : Écran d'accueil avec liste des contrats
+- `app/(tabs)/explore.tsx` : Écran d'exploration
+- `app/(tabs)/admin.tsx` : Écran d'administration (réservé aux admins)
+- `app/(tabs)/_layout.tsx` : Configuration des onglets
+
+### Écrans de Gestion des Contrats
+- `app/new-contract.tsx` : Création d'un nouveau contrat
+- `app/contract/[id].tsx` : Détails d'un contrat spécifique
+
+### Scripts Utilitaires
+- `scripts/create-admin.js` : Script pour créer un compte administrateur
+
+## Modèles de Données
+
+### UserModel
+- id : ID Firebase Auth
+- email : Adresse email
+- displayName : Nom d'affichage
+- photoURL : URL de la photo de profil
+- createdAt : Date de création
+- contacts : Liste des IDs d'utilisateurs connectés
+- pendingInvitations : Invitations en attente
+- isAdmin : Droits d'administration
+
+### ContractModel
+- id : Identifiant unique
+- title : Titre du contrat
+- createdBy : ID de l'utilisateur créateur
+- participants : Liste des IDs des participants
+- isPublic : Contrat public ou privé
+- createdAt : Date de création
+- updatedAt : Date de mise à jour
+- status : État du contrat (pending, active, completed, cancelled)
+- conditions : Liste des conditions
+- counterparts : Liste des contreparties
+
+### ConditionModel
+- id : Identifiant unique
+- description : Description de la condition
+- assignedTo : Utilisateur assigné
+- deadline : Date limite (optionnel)
+- status : État (pending, in-progress, completed)
+- completedAt : Date de complétion
+- verifiedBy : Utilisateurs ayant vérifié
+
+### CounterpartModel
+- id : Identifiant unique
+- description : Description de la contrepartie
+- providedBy : Utilisateur fournissant la contrepartie
+- linkedConditions : Conditions liées
+- status : État (pending, in-progress, completed)
+- completedAt : Date de complétion
+- verifiedBy : Utilisateurs ayant vérifié
+
+## Flux Utilisateur
+
+### Authentification
+1. L'utilisateur crée un compte ou se connecte avec email/mot de passe
+2. Une fois authentifié, il est redirigé vers l'écran d'accueil
+
+### Gestion des Contrats
+1. Sur l'écran d'accueil, l'utilisateur voit la liste de ses contrats
+2. Il peut créer un nouveau contrat via le bouton +
+3. Lors de la création, il définit :
+   - Un titre
+   - Un autre utilisateur participant
+   - Des conditions (assignées à l'autre utilisateur)
+   - Des contreparties (ce qu'il offre en échange)
+4. Une fois le contrat créé, il peut être activé
+5. Les utilisateurs peuvent marquer les conditions et contreparties comme terminées
+6. Le contrat est automatiquement marqué comme terminé lorsque toutes les parties sont complétées
+
+### Administration
+1. Les administrateurs ont accès à un onglet supplémentaire
+2. Ils peuvent voir tous les utilisateurs et contrats
+3. Ils peuvent supprimer des contrats
+
+## Compte Administrateur
+- Une fonction spéciale (`scripts/create-admin.js`) permet de créer un compte administrateur
+- Ces comptes ont accès à des fonctionnalités supplémentaires via l'onglet Admin
+
+## Guide de Développement
+- Pour ajouter un nouvel écran, créer un fichier dans le dossier `app/`
+- Pour étendre les modèles, modifier `models/index.js`
+- Pour tester localement, exécuter `npm start` 
